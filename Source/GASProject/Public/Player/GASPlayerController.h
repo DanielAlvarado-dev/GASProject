@@ -10,6 +10,7 @@
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
+class IEnemyInterface;
 
 
 /**
@@ -23,6 +24,8 @@ class GASPROJECT_API AGASPlayerController : public APlayerController
 public:
 	AGASPlayerController();
 
+	virtual void PlayerTick(float DeltaTime) override;
+
 	virtual void SetupInputComponent() override;
 	
 protected:
@@ -31,9 +34,12 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = Input) TObjectPtr<UInputMappingContext> GASContext;
 	UPROPERTY(EditAnywhere, Category = Input) TObjectPtr<UInputAction> MoveAction;
-
-
-
-
+	
 	void Move(const FInputActionValue& Value);
+
+	void CursorTrace();
+
+	TScriptInterface<IEnemyInterface> ThisActor;
+	TScriptInterface<IEnemyInterface> LastActor;
+	
 };
