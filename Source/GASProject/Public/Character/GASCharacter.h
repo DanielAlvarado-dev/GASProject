@@ -6,6 +6,9 @@
 #include "GASCharacterBase.h"
 #include "GASCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+
 UCLASS()
 class GASPROJECT_API AGASCharacter : public AGASCharacterBase
 {
@@ -19,6 +22,10 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(EditAnywhere) TObjectPtr<USpringArmComponent> SpringArm;
+	UPROPERTY(EditAnywhere) TObjectPtr<UCameraComponent> Camera;
 	
 
 
