@@ -3,6 +3,8 @@
 
 #include "Character/Enemy.h"
 
+#include "GASProject/GASProject.h"
+
 
 AEnemy::AEnemy()
 {
@@ -26,12 +28,16 @@ void AEnemy::Tick(float DeltaTime)
 void AEnemy::HighlightActor()
 {
 	bHighlighted = true;
-	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.0f, 24, FColor::Green, false, 1.0f);
+	GetMesh()->SetRenderCustomDepth(true);
+	GetMesh()->CustomDepthStencilValue = CUSTOM_DEPTH_RED;
+	Weapon->SetRenderCustomDepth(true);
+	Weapon->CustomDepthStencilValue = CUSTOM_DEPTH_RED;
 }
 
 void AEnemy::UnhighlightActor()
 {
 	bHighlighted = false;
-	DrawDebugSphere(GetWorld(), GetActorLocation(), 100.0f, 24, FColor::Red, false, 1.0f);
+	GetMesh()->SetRenderCustomDepth(false);
+	Weapon->SetRenderCustomDepth(false);
 }
 
