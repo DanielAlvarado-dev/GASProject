@@ -1,34 +1,30 @@
-// Copyright Daniel Alvarado
+﻿// Copyright Daniel Alvarado
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-#include "GASCharacterBase.generated.h"
+#include "GameFramework/PlayerState.h"
+#include "GASPlayerState.generated.h"
 
-class UAttributeSet;
 class UAbilitySystemComponent;
+class UAttributeSet;
 
-UCLASS(Abstract)
-class GASPROJECT_API AGASCharacterBase : public ACharacter, public IAbilitySystemInterface
+/**
+ * 
+ */
+UCLASS()
+class GASPROJECT_API AGASPlayerState : public APlayerState, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	AGASCharacterBase();
+	AGASPlayerState();
+
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 protected:
-	virtual void BeginPlay() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat") TObjectPtr<USkeletalMeshComponent> Weapon;
-
 	UPROPERTY() TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY() TObjectPtr<UAttributeSet> AttributeSet;
-
-private:
-
-
 };

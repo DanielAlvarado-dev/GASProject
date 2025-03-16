@@ -18,8 +18,10 @@ public:
 	AGASCharacter();
 
 	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void InitAbilityActorInfo();
 
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
 protected:
 	virtual void BeginPlay() override;
 

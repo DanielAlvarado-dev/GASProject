@@ -3,6 +3,9 @@
 
 #include "Character/Enemy.h"
 
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/GASAbilitySystemComponent.h"
+#include "AbilitySystem/GASAttributeSet.h"
 #include "GASProject/GASProject.h"
 
 
@@ -11,12 +14,20 @@ AEnemy::AEnemy()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetMesh()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+
+	AbilitySystemComponent = CreateDefaultSubobject<UGASAbilitySystemComponent>("AbilitySystemComponent");
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	AttributeSet = CreateDefaultSubobject<UGASAttributeSet>("AttributeSet");
 	
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	
 }
 

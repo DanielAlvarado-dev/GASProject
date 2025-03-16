@@ -15,6 +15,11 @@ AGASCharacterBase::AGASCharacterBase()
 
 }
 
+UAbilitySystemComponent* AGASCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 
 void AGASCharacterBase::BeginPlay()
 {

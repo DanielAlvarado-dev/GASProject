@@ -3,9 +3,11 @@
 
 #include "Character/GASCharacter.h"
 
+#include "AbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/GASPlayerState.h"
 
 
 AGASCharacter::AGASCharacter()
@@ -39,8 +41,24 @@ void AGASCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AGASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AGASCharacter::PossessedBy(AController* NewController)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::PossessedBy(NewController);
+	InitAbilityActorInfo();
+}
+
+void AGASCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	InitAbilityActorInfo();
+}
+
+void AGASCharacter::InitAbilityActorInfo()
+{
+	AGASPlayerState* GASPlayerState = GetPlayerState<AGASPlayerState>();
+	check(GASPlayerState);
+	GASPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(GASPlayerState, this);
+	AbilitySystemComponent = GASPlayerState->GetAbilitySystemComponent();
+	AttributeSet = GASPlayerState->GetAttributeSet();
 }
 

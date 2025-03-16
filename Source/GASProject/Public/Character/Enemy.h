@@ -17,8 +17,10 @@ public:
 	AEnemy();
 	virtual void Tick(float DeltaTime) override;
 
+	// ** IEnemyInterface ** //
 	virtual void HighlightActor() override;
 	virtual void UnhighlightActor() override;
+	// ** IEnemyInterface ** //
 
 	UPROPERTY(BlueprintReadOnly) bool bHighlighted = false;
 
