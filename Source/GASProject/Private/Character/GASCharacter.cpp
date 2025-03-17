@@ -7,7 +7,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/GASPlayerController.h"
 #include "Player/GASPlayerState.h"
+#include "UI/HUD/GasHUD.h"
 
 
 AGASCharacter::AGASCharacter()
@@ -60,5 +62,13 @@ void AGASCharacter::InitAbilityActorInfo()
 	GASPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(GASPlayerState, this);
 	AbilitySystemComponent = GASPlayerState->GetAbilitySystemComponent();
 	AttributeSet = GASPlayerState->GetAttributeSet();
+
+	if(AGASPlayerController* GASPlayerController = Cast<AGASPlayerController>(GetController()))
+	{
+		if(AGasHUD* GasHUD = Cast<AGasHUD>(GASPlayerController->GetHUD()))
+		{
+			GasHUD->InitOverlay(GASPlayerController, GASPlayerState, AbilitySystemComponent, AttributeSet);
+		}
+	}
 }
 
