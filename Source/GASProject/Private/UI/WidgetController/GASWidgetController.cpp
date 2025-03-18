@@ -10,3 +10,11 @@ void UGASWidgetController::SetWidgetControllerParams(const FWidgetControllerPara
 	AbilitySystemComponent = WCParams.AbilitySystemComponent;
 	AttributeSet = WCParams.AttributeSet;
 }
+
+void UGASWidgetController::BroadcastInitialValues()
+{
+}
+
+void UGASWidgetController::BindCallbacksToDependencies()
+{
+}

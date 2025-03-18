@@ -12,6 +12,7 @@ UOverlayWidgetController* AGasHUD::GetOverlayWidgetController(const FWidgetContr
 	{
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WCParams);
+		OverlayWidgetController->BindCallbacksToDependencies();
 		return OverlayWidgetController;
 	}
 	return OverlayWidgetController;
@@ -29,7 +30,7 @@ void AGasHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySyste
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
  
 	OverlayWidget->SetWidgetController(WidgetController);
- 	
+ 	WidgetController->BroadcastInitialValues();
 	Widget->AddToViewport();
 }
 

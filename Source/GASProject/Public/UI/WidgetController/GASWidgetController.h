@@ -35,6 +35,9 @@ class GASPROJECT_API UGASWidgetController : public UObject
 
 public:
 	UFUNCTION(BlueprintCallable) void SetWidgetControllerParams(const FWidgetControllerParams& WCParams);
+
+	virtual void BroadcastInitialValues();
+	virtual void BindCallbacksToDependencies();
 	
 protected:
 	UPROPERTY(BlueprintReadOnly,Category = WidgetController)TObjectPtr<APlayerController> PlayerController;
