@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "GASEffectActor.generated.h"
 
+class UGameplayEffect;
 class USphereComponent;
 class UStaticMeshComponent;
 
@@ -19,11 +20,10 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
-	UFUNCTION() virtual void EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	UFUNCTION()virtual void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(BlueprintCallable) void ApplyEffectToTarget(AActor* Target, TSubclassOf<UGameplayEffect> GameplayEffectClass);
+	
+	UPROPERTY(EditAnywhere,Category = "Applied Effects")TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 private:
-UPROPERTY(EditAnywhere)	TObjectPtr<USphereComponent> SphereComponent;
-	UPROPERTY(EditAnywhere)	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
 };
