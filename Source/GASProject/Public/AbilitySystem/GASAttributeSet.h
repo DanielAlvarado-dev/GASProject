@@ -25,6 +25,8 @@ public:
 	UGASAttributeSet();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+	
 	/** Health*/
 	UPROPERTY(ReplicatedUsing = OnRep_Health,BlueprintReadOnly,Category ="Vital Attributesi") FGameplayAttributeData Health;
 	UPROPERTY(ReplicatedUsing = OnRep_MaxHealth,BlueprintReadOnly,Category ="Vital Attributesi") FGameplayAttributeData MaxHealth;
