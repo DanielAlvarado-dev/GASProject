@@ -27,3 +27,7 @@ void AGASCharacterBase::BeginPlay()
 	
 }
 
+void AGASCharacterBase::InitAbilityActorInfo()
+{
+}
+

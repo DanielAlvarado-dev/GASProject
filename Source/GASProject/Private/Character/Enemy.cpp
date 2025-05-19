@@ -23,11 +23,12 @@ AEnemy::AEnemy()
 	
 }
 
+
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	InitAbilityActorInfo();
 	
 }
 
@@ -52,3 +53,8 @@ void AEnemy::UnhighlightActor()
 	Weapon->SetRenderCustomDepth(false);
 }
 
+void AEnemy::InitAbilityActorInfo()
+{
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	Cast<UGASAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
+}
