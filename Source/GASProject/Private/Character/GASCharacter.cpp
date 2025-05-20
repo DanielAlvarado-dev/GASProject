@@ -72,5 +72,6 @@ void AGASCharacter::InitAbilityActorInfo()
 			GasHUD->InitOverlay(GASPlayerController, GASPlayerState, AbilitySystemComponent, AttributeSet);
 		}
 	}
+	InitializePrimaryAttributes();
 }
 
