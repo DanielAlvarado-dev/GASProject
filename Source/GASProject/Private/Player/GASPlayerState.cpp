@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/GASAbilitySystemComponent.h"
 #include "AbilitySystem/GASAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
 AGASPlayerState::AGASPlayerState()
 {
@@ -18,7 +19,18 @@ AGASPlayerState::AGASPlayerState()
 	AttributeSet = CreateDefaultSubobject<UGASAttributeSet>("AttributeSet");
 }
 
+void AGASPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AGASPlayerState, Level);
+}
+
 UAbilitySystemComponent* AGASPlayerState::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+void AGASPlayerState::OnRep_Level(int32 OldLevel)
+{
+	Level = OldLevel;
 }

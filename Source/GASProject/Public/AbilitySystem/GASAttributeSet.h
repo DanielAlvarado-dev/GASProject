@@ -53,33 +53,63 @@ public:
 	 *Primary Attributes
 	 */
 
-	UPROPERTY(ReplicatedUsing = OnRep_Strength,BlueprintReadOnly,Category ="Primary Attributesi") FGameplayAttributeData Strength;
+	UPROPERTY(ReplicatedUsing = OnRep_Strength,BlueprintReadOnly,Category ="Primary Attributes") FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Strength);
 
-	UPROPERTY(ReplicatedUsing = OnRep_Intelligence,BlueprintReadOnly,Category ="Primary Attributesi") FGameplayAttributeData Intelligence;
+	UPROPERTY(ReplicatedUsing = OnRep_Intelligence,BlueprintReadOnly,Category ="Primary Attributes") FGameplayAttributeData Intelligence;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Intelligence);
 	
-	UPROPERTY(ReplicatedUsing = OnRep_Resilience,BlueprintReadOnly,Category ="Primary Attributesi") FGameplayAttributeData Resilience;
+	UPROPERTY(ReplicatedUsing = OnRep_Resilience,BlueprintReadOnly,Category ="Primary Attributes") FGameplayAttributeData Resilience;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Resilience);
 	
-	UPROPERTY(ReplicatedUsing = OnRep_Vigor,BlueprintReadOnly,Category ="Primary Attributesi") FGameplayAttributeData Vigor;
+	UPROPERTY(ReplicatedUsing = OnRep_Vigor,BlueprintReadOnly,Category ="Primary Attributes") FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Vigor);
+
+	/*
+ *Secondary Attributes
+ */
+	UPROPERTY(ReplicatedUsing = OnRep_Armor,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Armor);
+
+	UPROPERTY(ReplicatedUsing = OnRep_ArmorPenetration,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData ArmorPenetration;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, ArmorPenetration);
+
+	UPROPERTY(ReplicatedUsing = OnRep_BlockChance,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData BlockChance;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, BlockChance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_CriticalHitChance,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData CriticalHitChance;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, CriticalHitChance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_CriticalHitDamage,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData CriticalHitDamage;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, CriticalHitDamage);
+
+	UPROPERTY(ReplicatedUsing = OnRep_CriticalHitResistance,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData CriticalHitResistance;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, CriticalHitResistance);
+
+	UPROPERTY(ReplicatedUsing = OnRep_HealthRegeneration,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData HealthRegeneration;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, HealthRegeneration);
+
+	UPROPERTY(ReplicatedUsing = OnRep_ManaRegeneration,BlueprintReadOnly,Category ="Secondary Attributes") FGameplayAttributeData ManaRegeneration;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, ManaRegeneration);
+
+	UPROPERTY(ReplicatedUsing = OnRep_MaxHealth,BlueprintReadOnly,Category ="Vital Attributes") FGameplayAttributeData MaxHealth;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, MaxHealth);
 	
+	UPROPERTY(ReplicatedUsing = OnRep_MaxMana,BlueprintReadOnly,Category ="Vital Attributes") FGameplayAttributeData MaxMana;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet, MaxMana);
 	/*
 	 *VitalAttributes
 	 */
 	
 	/** Health*/
-	UPROPERTY(ReplicatedUsing = OnRep_Health,BlueprintReadOnly,Category ="Vital Attributesi") FGameplayAttributeData Health;
-	UPROPERTY(ReplicatedUsing = OnRep_MaxHealth,BlueprintReadOnly,Category ="Vital Attributesi") FGameplayAttributeData MaxHealth;
+	UPROPERTY(ReplicatedUsing = OnRep_Health,BlueprintReadOnly,Category ="Vital Attributes") FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Health);
-	ATTRIBUTE_ACCESSORS(UGASAttributeSet, MaxHealth);
+
 
 	/** Mana*/
-	UPROPERTY(ReplicatedUsing = OnRep_Mana,BlueprintReadOnly,Category ="Vital Attributesi") FGameplayAttributeData Mana;
-	UPROPERTY(ReplicatedUsing = OnRep_MaxMana,BlueprintReadOnly,Category ="Vital Attributesi") FGameplayAttributeData MaxMana;
+	UPROPERTY(ReplicatedUsing = OnRep_Mana,BlueprintReadOnly,Category ="Vital Attributes") FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Mana);
-	ATTRIBUTE_ACCESSORS(UGASAttributeSet, MaxMana);
+
 
 	/** Health*/
 	UFUNCTION()  void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
@@ -91,17 +121,40 @@ public:
 
 	/** Strength*/
 	UFUNCTION()  void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
-
-
+	
 	/** Intelligence*/
 	UFUNCTION()  void OnRep_Intelligence(const FGameplayAttributeData& OldIntelligence) const;
-
-
+	
 	/** Resiliance*/
 	UFUNCTION()  void OnRep_Resilience(const FGameplayAttributeData& OldResilience) const;
 
 	/** Vigor*/
 	UFUNCTION()  void OnRep_Vigor(const FGameplayAttributeData& OldVigor) const;
+
+	/** Armor*/
+	UFUNCTION()  void OnRep_Armor(const FGameplayAttributeData& OldArmor) const;
+
+	/** Armor Penetration*/
+	UFUNCTION()  void OnRep_ArmorPenetration(const FGameplayAttributeData& OldArmorPenetration) const;
+
+	/** Block Chance*/
+	UFUNCTION()  void OnRep_BlockChance(const FGameplayAttributeData& OldBlockChance) const;
+
+	/** Critical Hit Chance*/
+	UFUNCTION()  void OnRep_CriticalHitChance(const FGameplayAttributeData& OldCriticalHitChance) const;
+
+	/** Critical Hit Damage*/
+	UFUNCTION()  void OnRep_CriticalHitDamage(const FGameplayAttributeData& OldCriticalHitDamage) const;
+
+	/** Critical Hit Resistance*/
+	UFUNCTION()  void OnRep_CriticalHitResistance(const FGameplayAttributeData& OldCriticalHitResistance) const;
+
+	/** Health Regeneration*/
+	UFUNCTION()  void OnRep_HealthRegeneration(const FGameplayAttributeData& OldHealthRegeneration) const;
+	
+	/** Mana Regeneration*/
+	UFUNCTION()  void OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const;
+	
 
 	
 private:

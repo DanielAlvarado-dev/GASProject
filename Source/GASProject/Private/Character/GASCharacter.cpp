@@ -56,6 +56,13 @@ void AGASCharacter::OnRep_PlayerState()
 	InitAbilityActorInfo();
 }
 
+int32 AGASCharacter::GetPlayerLevel()
+{
+	AGASPlayerState* GASPlayerState = GetPlayerState<AGASPlayerState>();
+	check(GASPlayerState)
+	return GASPlayerState->GetPlayerLevel();
+}
+
 void AGASCharacter::InitAbilityActorInfo()
 {
 	AGASPlayerState* GASPlayerState = GetPlayerState<AGASPlayerState>();
@@ -72,6 +79,6 @@ void AGASCharacter::InitAbilityActorInfo()
 			GasHUD->InitOverlay(GASPlayerController, GASPlayerState, AbilitySystemComponent, AttributeSet);
 		}
 	}
-	InitializePrimaryAttributes();
+	InitializeDefaultAttributes();
 }
 

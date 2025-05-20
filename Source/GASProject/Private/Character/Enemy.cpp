@@ -20,7 +20,6 @@ AEnemy::AEnemy()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UGASAttributeSet>("AttributeSet");
-	
 }
 
 
@@ -51,6 +50,11 @@ void AEnemy::UnhighlightActor()
 	bHighlighted = false;
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+int32 AEnemy::GetPlayerLevel()
+{
+	return Level;
 }
 
 void AEnemy::InitAbilityActorInfo()

@@ -22,10 +22,18 @@ public:
 	virtual void UnhighlightActor() override;
 	// ** IEnemyInterface ** //
 
+	//** ICombatInterface ** //
+	virtual int32 GetPlayerLevel() override;
+	/** CombatInterfaceEndpoint */
+
 	UPROPERTY(BlueprintReadOnly) bool bHighlighted = false;
 
 protected:
 	virtual void InitAbilityActorInfo() override;
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Character class defaults")	int32 Level = 1;
+private:
+
 
 };
