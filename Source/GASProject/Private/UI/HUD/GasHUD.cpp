@@ -4,6 +4,7 @@
 #include "UI/HUD/GasHUD.h"
 #include "UI/Widgets/GASUserWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/WidgetController/AttributeMenuWidgetController.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 
 UOverlayWidgetController* AGasHUD::GetOverlayWidgetController(const FWidgetControllerParams& WCParams)
@@ -16,6 +17,18 @@ UOverlayWidgetController* AGasHUD::GetOverlayWidgetController(const FWidgetContr
 		return OverlayWidgetController;
 	}
 	return OverlayWidgetController;
+}
+
+UAttributeMenuWidgetController* AGasHUD::GetAttributeMenuWidgetController(const FWidgetControllerParams& WCParams)
+{
+	if(AttributeMenuWidgetController == nullptr)
+	{
+		AttributeMenuWidgetController = NewObject<UAttributeMenuWidgetController>(this, AttributeMenuWidgetControllerClass);
+		AttributeMenuWidgetController->SetWidgetControllerParams(WCParams);
+		AttributeMenuWidgetController->BindCallbacksToDependencies();
+		return AttributeMenuWidgetController;
+	}
+	return AttributeMenuWidgetController;
 }
 
 void AGasHUD::InitOverlay(APlayerController* PC, APlayerState* PS, UAbilitySystemComponent* ASC, UAttributeSet* AS)
