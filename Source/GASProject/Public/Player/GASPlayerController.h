@@ -13,6 +13,7 @@ class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
 class IEnemyInterface;
+class UGASAbilitySystemComponent;
 
 
 /**
@@ -49,4 +50,12 @@ private:
 	void AbilityInputTagHeld(FGameplayTag InputTag);
 
 	UPROPERTY(EditDefaultsOnly,Category = Input)TObjectPtr<UGasInputConfig> InputConfig;
+
+	UPROPERTY() TObjectPtr<UGASAbilitySystemComponent> GASAbilitySystemComponent;
+
+	UGASAbilitySystemComponent* GetASC();
+
+
+
+	bool bTargeting = false;
 };

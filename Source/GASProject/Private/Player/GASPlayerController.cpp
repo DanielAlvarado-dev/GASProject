@@ -1,7 +1,11 @@
 ﻿// Copyright Daniel Alvarado
 #include "Player/GASPlayerController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameplayTagContainer.h"
+#include "GASGameplayTags.h"
+#include "AbilitySystem/GASAbilitySystemComponent.h"
 #include "Debug/DebugHelper.h"
 #include "Input/GasInputComponent.h"
 #include "Interfaces/EnemyInterface.h"
@@ -73,69 +77,59 @@ void AGASPlayerController::CursorTrace()
  
 	LastActor = ThisActor;
 	ThisActor = CursorHit.GetActor();
- 
-	/**
-	 * Line trace from cursor. There are several scenarios:
-	 *  A. LastActor is null && ThisActor is null
-	 *		- Do nothing
-	 *	B. LastActor is null && ThisActor is valid
-	 *		- Highlight ThisActor
-	 *	C. LastActor is valid && ThisActor is null
-	 *		- UnHighlight LastActor
-	 *	D. Both actors are valid, but LastActor != ThisActor
-	 *		- UnHighlight LastActor, and Highlight ThisActor
-	 *	E. Both actors are valid, and are the same actor
-	 *		- Do nothing
-	 */
- 
-	if (LastActor == nullptr)
+	
+	if(LastActor != ThisActor)
 	{
-		if (ThisActor != nullptr)
-		{
-			// Case B
-			ThisActor->HighlightActor();
-		}
-		else
-		{
-			// Case A - both are null, do nothing
-		}
+		if(LastActor)LastActor->UnhighlightActor();
+		if(ThisActor)ThisActor->HighlightActor();
 	}
-	else // LastActor is valid
-	{
-		if (ThisActor == nullptr)
-		{
-			// Case C
-			LastActor->UnhighlightActor();
-		}
-		else // both actors are valid
-		{
-			if (LastActor != ThisActor)
-			{
-				// Case D
-				LastActor->UnhighlightActor();
-				ThisActor->HighlightActor();
-			}
-			else
-			{
-				// Case E - do nothing
-			}
-		}
-	}
-
 }
 
 void AGASPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
-
-	Debug::Print(InputTag.ToString(), FColor::Green, 1);
+	if (InputTag.MatchesTagExact(FGasGameplayTags::Get().InputTag_LMB))
+	{
+		bTargeting = ThisActor ? true : false;
+	}
 }
 
 void AGASPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 {
-	Debug::Print(InputTag.ToString(), FColor::Red, 0);
+	if (!InputTag.MatchesTagExact(FGasGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+		return;
+	}
+	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+	if (bTargeting)
+	{
+		if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
+	}
+	else
+	{
+		bTargeting = false;
+	}
 }
 
 void AGASPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 {
-	Debug::Print(InputTag.ToString(), FColor::Blue, 0);
+	if (!InputTag.MatchesTagExact(FGasGameplayTags::Get().InputTag_LMB))
+	{
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+		return;
+	}
+
+	if (bTargeting)
+	{
+		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
+	}
+}
+
+UGASAbilitySystemComponent* AGASPlayerController::GetASC()
+{
+	if (GASAbilitySystemComponent == nullptr)
+	{
+		GASAbilitySystemComponent = Cast<UGASAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>()));
+	}
+	return GASAbilitySystemComponent;
 }
