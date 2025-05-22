@@ -4,6 +4,7 @@
 #include "Character/GASCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/GASAbilitySystemComponent.h"
 
 
 AGASCharacterBase::AGASCharacterBase()
@@ -48,5 +49,13 @@ void AGASCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+}
+
+void AGASCharacterBase::AddCharacterAbilities() const
+{
+	UGASAbilitySystemComponent* GasAsc = CastChecked<UGASAbilitySystemComponent>(AbilitySystemComponent);
+	if(!HasAuthority()) return;
+	
+	GasAsc->AddChracterAbilities(StartupAbilities);
 }
 

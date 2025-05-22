@@ -1,8 +1,9 @@
 ﻿// Copyright Daniel Alvarado
 #include "Player/GASPlayerController.h"
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
-#include "GameFramework/SpringArmComponent.h"
+#include "GameplayTagContainer.h"
+#include "Debug/DebugHelper.h"
+#include "Input/GasInputComponent.h"
 #include "Interfaces/EnemyInterface.h"
 
 AGASPlayerController::AGASPlayerController()
@@ -20,10 +21,13 @@ void AGASPlayerController::PlayerTick(float DeltaTime)
 void AGASPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent))
-	{
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AGASPlayerController::Move);
-	}
+	UGasInputComponent* GasInputComponent = CastChecked<UGasInputComponent>(InputComponent);
+		
+	GasInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AGASPlayerController::Move);
+	GasInputComponent->BindAbilityActions(InputConfig, this,
+		&AGASPlayerController::AbilityInputTagPressed,
+		&AGASPlayerController::AbilityInputTagReleased,
+		&AGASPlayerController::AbilityInputTagHeld);
 }
 
 void AGASPlayerController::BeginPlay()
@@ -118,4 +122,20 @@ void AGASPlayerController::CursorTrace()
 		}
 	}
 
+}
+
+void AGASPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+
+	Debug::Print(InputTag.ToString(), FColor::Green, 1);
+}
+
+void AGASPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	Debug::Print(InputTag.ToString(), FColor::Red, 0);
+}
+
+void AGASPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	Debug::Print(InputTag.ToString(), FColor::Blue, 0);
 }

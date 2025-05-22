@@ -7,6 +7,8 @@
 #include "GASPlayerController.generated.h"
 
 
+struct FGameplayTag;
+class UGasInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -41,5 +43,10 @@ private:
 
 	TScriptInterface<IEnemyInterface> ThisActor;
 	TScriptInterface<IEnemyInterface> LastActor;
-	
+
+	void AbilityInputTagPressed(FGameplayTag InputTag);
+	void AbilityInputTagReleased(FGameplayTag InputTag);
+	void AbilityInputTagHeld(FGameplayTag InputTag);
+
+	UPROPERTY(EditDefaultsOnly,Category = Input)TObjectPtr<UGasInputConfig> InputConfig;
 };
