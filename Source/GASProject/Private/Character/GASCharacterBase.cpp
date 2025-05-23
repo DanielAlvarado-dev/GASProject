@@ -75,11 +75,59 @@ void AGASCharacterBase::AddCharacterAbilities() const
 	GasAsc->AddCharacterAbilities(StartupAbilities);
 }
 
-void AGASCharacterBase::UpdateFacingTarget(const FVector& TargetLocation)
+void AGASCharacterBase::Dissolve()
+{
+	if(IsValid(DissolveMaterialInstance))
+	{
+		if(UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(DissolveMaterialInstance, this))
+		{
+			GetMesh()->SetMaterial(0, DynamicMaterialInstance);
+			StartDissolveTimeline(DynamicMaterialInstance);
+			
+		}
+	}
+	if(IsValid(WeaponDissolveMaterialInstance))
+	{
+		if(UMaterialInstanceDynamic* WeaponMaterialInst = UMaterialInstanceDynamic::Create(WeaponDissolveMaterialInstance, this))
+		{
+			Weapon->SetMaterial(0, WeaponMaterialInst);
+			StartWeaponDissolveTimeline(WeaponMaterialInst);
+		}
+	}
+}
+
+void AGASCharacterBase::UpdateFacingTarget_Implementation(const FVector& TargetLocation)
 {
 	if (MotionWarpingComponent)
 	{
 		MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation("FacingTarget", TargetLocation);
 	}
+}
+
+UAnimMontage* AGASCharacterBase::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
+void AGASCharacterBase::Die()
+{
+	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+	MulticastHandleDeath();
+}
+
+void AGASCharacterBase::MulticastHandleDeath_Implementation()
+{
+	Weapon->SetSimulatePhysics(true);
+	Weapon->SetEnableGravity(true);
+	Weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Dissolve();
+	
 }
 

@@ -115,6 +115,14 @@ public:
 	ATTRIBUTE_ACCESSORS(UGASAttributeSet, Mana);
 
 
+	
+	/*
+	 *Meta Attributes
+	 */
+
+	UPROPERTY(BlueprintReadOnly,Category ="Meta Attributes") FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UGASAttributeSet,IncomingDamage);
+
 	/** Health*/
 	UFUNCTION()  void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 	UFUNCTION()  void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth) const;
@@ -164,6 +172,7 @@ public:
 private:
 
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
+	void ShowFloatingText(const FEffectProperties& Props, float Damage) const;
 	
 };
 

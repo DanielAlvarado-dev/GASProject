@@ -28,4 +28,5 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)	TSubclassOf<AGasProjectile> ProjectileClass;
 
 	UPROPERTY(EditAnywhere)TSubclassOf<UGameplayEffect> DamageEffectClass;
+	UPROPERTY(EditAnywhere)TSubclassOf<UGameplayEffect> HitReactEffectClass;
 };

@@ -7,6 +7,7 @@
 #include "GASPlayerController.generated.h"
 
 
+class UDamageTextComponent;
 struct FGameplayTag;
 class UGasInputConfig;
 class UInputMappingContext;
@@ -29,10 +30,10 @@ public:
 
 	virtual void PlayerTick(float DeltaTime) override;
 
-	virtual void SetupInputComponent() override;
-	
+	UFUNCTION(Client,Reliable)void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
 protected:
 	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
 
 private:
 	UPROPERTY(EditAnywhere, Category = Input) TObjectPtr<UInputMappingContext> GASContext;
@@ -54,8 +55,8 @@ private:
 	UPROPERTY() TObjectPtr<UGASAbilitySystemComponent> GASAbilitySystemComponent;
 
 	UGASAbilitySystemComponent* GetASC();
-
-
-
+	
 	bool bTargeting = false;
+
+	UPROPERTY(EditDefaultsOnly) TSubclassOf<UDamageTextComponent> DamageTextClass;
 };

@@ -35,10 +35,12 @@ class GASPROJECT_API UCharacterClassInfo : public UDataAsset
 
 public:
 
-	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassInformation;
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults") TMap<ECharacterClass, FCharacterClassDefaultInfo> CharacterClassInformation;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")TSubclassOf<UGameplayEffect> SecondaryAttributes;
-	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults")TSubclassOf<UGameplayEffect> VitalAttributes;
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults") TSubclassOf<UGameplayEffect> SecondaryAttributes;
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults") TSubclassOf<UGameplayEffect> VitalAttributes;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Class Defaults") TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
 
 	FCharacterClassDefaultInfo GetCharacterClassInfo(ECharacterClass CharacterClass) const;
 

@@ -73,3 +73,15 @@ void UGasAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldC
 	
 }
 
+void UGasAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+{
+	const AGASGameMode* GameMode = Cast<AGASGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if(GameMode == nullptr) return;
+
+	const UCharacterClassInfo* CharacterClassInfo = GameMode->CharacterClassInfo;
+	for(const TSubclassOf<UGameplayAbility> Ability : CharacterClassInfo->CommonAbilities)
+	{
+		ASC->GiveAbility(FGameplayAbilitySpec(Ability, 1));
+	}
+}
+

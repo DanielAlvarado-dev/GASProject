@@ -4,10 +4,12 @@
 #include "Character/Enemy.h"
 
 #include "AbilitySystemComponent.h"
+#include "GASGameplayTags.h"
 #include "AbilitySystem/GASAbilitySystemComponent.h"
 #include "AbilitySystem/GasAbilitySystemLibrary.h"
 #include "AbilitySystem/GASAttributeSet.h"
 #include "Components/WidgetComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GASProject/GASProject.h"
 #include "UI/Widgets/GASUserWidget.h"
 
@@ -25,6 +27,8 @@ AEnemy::AEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 	HealthBar->SetupAttachment(GetRootComponent());
+
+	
 }
 
 
@@ -33,6 +37,11 @@ void AEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	InitAbilityActorInfo();
+	GetCharacterMovement()-> MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+
+	UGasAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent);
+	
+	
 
 	if (UGASUserWidget* AuraUserWidget = Cast<UGASUserWidget>(HealthBar->GetUserWidgetObject()))
 	{
@@ -53,13 +62,24 @@ void AEnemy::BeginPlay()
 				OnMaxHealthChanged.Broadcast(Data.NewValue);
 			}
 		);
+	
+		AbilitySystemComponent->RegisterGameplayTagEvent(	FGasGameplayTags::Get().Effects_HitReact, EGameplayTagEventType::NewOrRemoved).AddUObject(
+			this,
+			&AEnemy::HitReactTagChanged);
 
 		OnMaxHealthChanged.Broadcast(GasAs->GetMaxHealth());
 		OnHealthChanged.Broadcast(GasAs->GetHealth());
 	}
+}
 
+
+void AEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bHitReacting = NewCount > 0;
+	GetCharacterMovement()-> MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
 	
 }
+
 
 void AEnemy::InitializeDefaultAttributes() const
 {
@@ -90,6 +110,12 @@ void AEnemy::UnhighlightActor()
 int32 AEnemy::GetPlayerLevel()
 {
 	return Level;
+}
+
+void AEnemy::Die()
+{
+	SetLifeSpan(LifeSpan);
+	Super::Die();
 }
 
 void AEnemy::InitAbilityActorInfo()

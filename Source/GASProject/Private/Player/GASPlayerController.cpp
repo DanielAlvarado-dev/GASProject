@@ -7,8 +7,10 @@
 #include "GASGameplayTags.h"
 #include "AbilitySystem/GASAbilitySystemComponent.h"
 #include "Debug/DebugHelper.h"
+#include "GameFramework/Character.h"
 #include "Input/GasInputComponent.h"
 #include "Interfaces/EnemyInterface.h"
+#include "UI/Widget/DamageTextComponent.h"
 
 AGASPlayerController::AGASPlayerController()
 {
@@ -21,6 +23,19 @@ void AGASPlayerController::PlayerTick(float DeltaTime)
 	Super::PlayerTick(DeltaTime);
 	CursorTrace();
 }
+
+void AGASPlayerController::ShowDamageNumber_Implementation(const float DamageAmount, ACharacter* TargetCharacter)
+{
+	if(IsValid(TargetCharacter) && DamageTextClass)
+	{
+		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
+		DamageText->SetDamageText(DamageAmount);
+	}
+}
+
 
 void AGASPlayerController::SetupInputComponent()
 {

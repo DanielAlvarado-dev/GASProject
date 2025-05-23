@@ -7,7 +7,10 @@
 #include "AbilitySystemComponent.h"
 #include "GASGameplayTags.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/GASPlayerController.h"
 
 UGASAttributeSet::UGASAttributeSet()
 {
@@ -77,16 +80,46 @@ void UGASAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, f
 void UGASAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
+	
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
-	if(Data.EvaluatedData.Attribute == GetHealthAttribute())
+
+	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 		UE_LOG(LogTemp, Warning, TEXT("Changed Health on %s, Health: %f"), *Props.TargetAvatarActor->GetName(), GetHealth());
 	}
-	if(Data.EvaluatedData.Attribute == GetManaAttribute())
+	if (Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(), 0.f, GetMaxMana()));
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);
+		if (LocalIncomingDamage > 0.f)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+			const bool bFatal = NewHealth <= 0.f;
+			if (bFatal)
+			{
+				ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
+				if (CombatInterface)
+				{
+					CombatInterface->Die();
+				}
+			}
+			else
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FGasGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+
+			ShowFloatingText(Props, LocalIncomingDamage);
+		}
 	}
 }
 
@@ -112,7 +145,7 @@ void UGASAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData&
 		}
 		if(Props.SourceController)
 		{
-			ACharacter* SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
+			Props.SourceCharacter = Cast<ACharacter>(Props.SourceController->GetPawn());
 		}
 	}
 
@@ -124,6 +157,18 @@ void UGASAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData&
 		Props.TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Props.TargetAvatarActor);
 	}
 }
+
+void UGASAttributeSet::ShowFloatingText(const FEffectProperties& Props, const float Damage) const
+{
+	if (Props.SourceCharacter != Props.TargetCharacter)
+	{
+		if(AGASPlayerController* PC = Cast<AGASPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		{
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+		}
+	}
+}
+
 
 void UGASAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth) const
 {

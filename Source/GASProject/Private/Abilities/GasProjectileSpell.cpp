@@ -5,7 +5,9 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GASGameplayTags.h"
 #include "Actors/GasProjectile.h"
+#include "Debug/DebugHelper.h"
 #include "Interfaces/CombatInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -21,32 +23,35 @@ void UGasProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 void UGasProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
 {
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
-	if(!bIsServer) return;
+	if (!bIsServer) return;
 
-	if(ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo()))
+	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
+	if (CombatInterface)
 	{
 		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
-		FRotator Rotation = (ProjectileTargetLocation- SocketLocation).Rotation();
+		FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
 		Rotation.Pitch = 0.f;
-		
+
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
 		SpawnTransform.SetRotation(Rotation.Quaternion());
 		
-		//TODO: Set rotation
-		
-		AGasProjectile*Projectile = 	GetWorld()->SpawnActorDeferred<AGasProjectile>(
+		AGasProjectile* Projectile = GetWorld()->SpawnActorDeferred<AGasProjectile>(
 			ProjectileClass,
-			SpawnTransform, GetOwningActorFromActorInfo(),
+			SpawnTransform,
+			GetOwningActorFromActorInfo(),
 			Cast<APawn>(GetOwningActorFromActorInfo()),
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 
 		const UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), SourceASC->MakeEffectContext());
 
-		const FGameplayEffectSpecHandle SpecHandle = SourceASC->MakeOutgoingSpec(DamageEffectClass,GetAbilityLevel(), SourceASC->MakeEffectContext());
+		const FGasGameplayTags GameplayTags = FGasGameplayTags::Get();
+		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+		
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, GameplayTags.Damage, ScaledDamage);
 		Projectile->DamageEffectSpecHandle = SpecHandle;
-
-		//Todo: Give the projectile a gameplay effect spec for causing damage
+		
 		Projectile->FinishSpawning(SpawnTransform);
 	}
 }

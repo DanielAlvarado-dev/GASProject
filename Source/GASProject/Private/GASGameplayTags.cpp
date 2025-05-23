@@ -118,4 +118,14 @@ void FGasGameplayTags::InitializeNativeGameplayTags()
 		FName("InputTag.4"),
 		FString("Input tag for 4 key")
 		);
+
+	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage"),
+		FString("Damage")
+		);
+
+	GameplayTags.Effects_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Effects.HitReact"),
+		FString("Hit React Effect")
+		);
 }
