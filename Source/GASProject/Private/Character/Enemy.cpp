@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/GASAbilitySystemComponent.h"
+#include "AbilitySystem/GasAbilitySystemLibrary.h"
 #include "AbilitySystem/GASAttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "GASProject/GASProject.h"
@@ -56,6 +57,13 @@ void AEnemy::BeginPlay()
 		OnMaxHealthChanged.Broadcast(GasAs->GetMaxHealth());
 		OnHealthChanged.Broadcast(GasAs->GetHealth());
 	}
+
+	
+}
+
+void AEnemy::InitializeDefaultAttributes() const
+{
+	UGasAbilitySystemLibrary::InitializeDefaultAttributes(this, CharacterClass, Level, AbilitySystemComponent);
 }
 
 void AEnemy::Tick(float DeltaTime)

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GASCharacterBase.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Interfaces/EnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "Enemy.generated.h"
@@ -35,11 +36,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable) FOnAttributedChangedSignature OnMaxHealthChanged;
 
+
 protected:
 	virtual void InitAbilityActorInfo() override;
 	virtual void BeginPlay() override;
+	virtual void InitializeDefaultAttributes() const override;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Character class defaults")	int32 Level = 1;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Character class defaults") ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly) TObjectPtr<UWidgetComponent> HealthBar;
 private:

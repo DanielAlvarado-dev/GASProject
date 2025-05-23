@@ -59,7 +59,7 @@ void AGASCharacter::OnRep_PlayerState()
 
 int32 AGASCharacter::GetPlayerLevel()
 {
-	AGASPlayerState* GASPlayerState = GetPlayerState<AGASPlayerState>();
+	const AGASPlayerState* GASPlayerState = GetPlayerState<AGASPlayerState>();
 	check(GASPlayerState)
 	return GASPlayerState->GetPlayerLevel();
 }
