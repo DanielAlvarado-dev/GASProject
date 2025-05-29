@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "GASGameplayTags.h"
+#include "AbilitySystem/GasAbilitySystemLibrary.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
@@ -36,6 +37,12 @@ UGASAttributeSet::UGASAttributeSet()
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_ManaRegeneration, GetManaRegenerationAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxHealth, GetMaxHealthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Secondary_MaxMana, GetMaxManaAttribute);
+
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Fire, GetFireResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Lightning, GetLightningResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Arcane, GetArcaneResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attributes_Resistance_Physical, GetPhysicalResistanceAttribute);
+	
 }
 
 void UGASAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -60,6 +67,11 @@ void UGASAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet,Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet,Health, COND_None, REPNOTIFY_Always);
+
+	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet,FireResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet,LightningResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet,ArcaneResistance, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UGASAttributeSet,PhysicalResistance, COND_None, REPNOTIFY_Always);
 
 }
 
@@ -117,8 +129,9 @@ void UGASAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbac
 				TagContainer.AddTag(FGasGameplayTags::Get().Effects_HitReact);
 				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 			}
-
-			ShowFloatingText(Props, LocalIncomingDamage);
+			const bool bBlockedHit = UGasAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
+			const bool bCriticalHit = UGasAbilitySystemLibrary::IsCriticalHit(Props.EffectContextHandle);
+			ShowFloatingText(Props, LocalIncomingDamage, bBlockedHit, bCriticalHit);
 		}
 	}
 }
@@ -158,13 +171,14 @@ void UGASAttributeSet::SetEffectProperties(const FGameplayEffectModCallbackData&
 	}
 }
 
-void UGASAttributeSet::ShowFloatingText(const FEffectProperties& Props, const float Damage) const
+void UGASAttributeSet::ShowFloatingText(const FEffectProperties& Props, const float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{
-		if(AGASPlayerController* PC = Cast<AGASPlayerController>(UGameplayStatics::GetPlayerController(Props.SourceCharacter, 0)))
+		if(AGASPlayerController* PC = Cast<AGASPlayerController>(Props.SourceCharacter->Controller))
 		{
-			PC->ShowDamageNumber(Damage, Props.TargetCharacter);
+			// Show damage number on the source player controller
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 		}
 	}
 }
@@ -249,4 +263,24 @@ void UGASAttributeSet::OnRep_HealthRegeneration(const FGameplayAttributeData& Ol
 void UGASAttributeSet::OnRep_ManaRegeneration(const FGameplayAttributeData& OldManaRegeneration) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, ManaRegeneration, OldManaRegeneration);
+}
+
+void UGASAttributeSet::OnRep_FireResistance(const FGameplayAttributeData& OldFireResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, FireResistance, OldFireResistance);
+}
+
+void UGASAttributeSet::OnRep_ArcaneResistance(const FGameplayAttributeData& OldArcaneResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, ArcaneResistance, OldArcaneResistance);
+}
+
+void UGASAttributeSet::OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, PhysicalResistance, OldPhysicalResistance);
+}
+
+void UGASAttributeSet::OnRep_LightningResistance(const FGameplayAttributeData& OldLightningResistance) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UGASAttributeSet, LightningResistance, OldLightningResistance);
 }

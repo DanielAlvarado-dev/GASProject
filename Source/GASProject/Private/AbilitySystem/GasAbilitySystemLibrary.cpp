@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/GasAbilitySystemLibrary.h"
 
+#include "GasAbilityTypes.h"
 #include "GameMode/GASGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/GASPlayerState.h"
@@ -44,13 +45,10 @@ UAttributeMenuWidgetController* UGasAbilitySystemLibrary::GetAttributeMenuWidget
 void UGasAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldContextObject,
 	ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC)
 {
-	const AGASGameMode* GameMode = Cast<AGASGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if(GameMode == nullptr) return;
+	const AActor* AvatarActor = ASC->GetAvatarActor();
 
-	AActor* AvatarActor = ASC->GetAvatarActor();
-
-	const UCharacterClassInfo* CharacterClassInfo = GameMode->CharacterClassInfo;
-	const FCharacterClassDefaultInfo ClassInfo =GameMode->CharacterClassInfo->GetCharacterClassInfo(CharacterClass);
+	const UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
+	const FCharacterClassDefaultInfo ClassInfo = CharacterClassInfo->GetCharacterClassInfo(CharacterClass);
 
 	FGameplayEffectContextHandle PrimaryAttributesContextHandle = ASC->MakeEffectContext();
 	PrimaryAttributesContextHandle.AddSourceObject(AvatarActor);
@@ -75,13 +73,52 @@ void UGasAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* WorldC
 
 void UGasAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
 {
-	const AGASGameMode* GameMode = Cast<AGASGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if(GameMode == nullptr) return;
-
-	const UCharacterClassInfo* CharacterClassInfo = GameMode->CharacterClassInfo;
+	const UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
 	for(const TSubclassOf<UGameplayAbility> Ability : CharacterClassInfo->CommonAbilities)
 	{
 		ASC->GiveAbility(FGameplayAbilitySpec(Ability, 1));
+	}
+}
+
+UCharacterClassInfo* UGasAbilitySystemLibrary::GetCharacterClassInfo(const UObject* WorldContextObject)
+{
+	const AGASGameMode* GameMode = Cast<AGASGameMode>(UGameplayStatics::GetGameMode(WorldContextObject));
+	if(GameMode == nullptr) return nullptr;
+	return GameMode->CharacterClassInfo;
+}
+
+bool UGasAbilitySystemLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FGasGameplayEffectContext* GasContext = static_cast<const FGasGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return GasContext->IsBlockedHit();
+	}
+	return false;
+}
+
+bool UGasAbilitySystemLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle)
+{
+	if(const FGasGameplayEffectContext* GasContext = static_cast<const FGasGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		return GasContext->IsCriticalHit();
+	}
+	return false;
+}
+
+void UGasAbilitySystemLibrary::SetIsBlockedHit(FGameplayEffectContextHandle& EffectContextHandle, bool bInIsBlockedHit)
+{
+	if(FGasGameplayEffectContext* GasContext = static_cast< FGasGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		GasContext->SetIsBlockedHit(bInIsBlockedHit);
+	}
+}
+
+void UGasAbilitySystemLibrary::SetIsCriticalHit(FGameplayEffectContextHandle& EffectContextHandle,
+	bool bInIsCriticalHit)
+{
+	if(FGasGameplayEffectContext* GasContext = static_cast< FGasGameplayEffectContext*>(EffectContextHandle.Get()))
+	{
+		GasContext->SetIsCriticalHit(bInIsCriticalHit);
 	}
 }
 

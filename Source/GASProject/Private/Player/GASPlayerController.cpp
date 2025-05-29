@@ -24,15 +24,15 @@ void AGASPlayerController::PlayerTick(float DeltaTime)
 	CursorTrace();
 }
 
-void AGASPlayerController::ShowDamageNumber_Implementation(const float DamageAmount, ACharacter* TargetCharacter)
+void AGASPlayerController::ShowDamageNumber_Implementation(const float DamageAmount, ACharacter* TargetCharacter, bool bBlockedHit,bool bCriticalHit)
 {
-	if(IsValid(TargetCharacter) && DamageTextClass)
+	if (IsValid(TargetCharacter) && DamageTextClass && IsLocalController())
 	{
 		UDamageTextComponent* DamageText = NewObject<UDamageTextComponent>(TargetCharacter, DamageTextClass);
 		DamageText->RegisterComponent();
 		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepRelativeTransform);
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		DamageText->SetDamageText(DamageAmount, bBlockedHit, bCriticalHit);
 	}
 }
 
@@ -104,7 +104,7 @@ void AGASPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	if (InputTag.MatchesTagExact(FGasGameplayTags::Get().InputTag_LMB))
 	{
-		bTargeting = ThisActor ? true : false;
+		bTargeting = true;
 	}
 }
 

@@ -9,6 +9,8 @@
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "Enemy.generated.h"
 
+class AGasAIController;
+class UBehaviorTree;
 class UWidgetComponent;
 
 UCLASS()
@@ -20,6 +22,8 @@ public:
 
 	AEnemy();
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void PossessedBy(AController* NewController) override;
 
 	// ** IEnemyInterface ** //
 	virtual void HighlightActor() override;
@@ -52,6 +56,9 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category = "Character class defaults") ECharacterClass CharacterClass = ECharacterClass::Warrior;
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly) TObjectPtr<UWidgetComponent> HealthBar;
+
+	UPROPERTY(EditAnywhere,Category = AI)TObjectPtr<UBehaviorTree> BehaviorTree;
+	UPROPERTY(VisibleAnywhere,Category = AI) TObjectPtr<AGasAIController> GasAIController;
 
 private:
 

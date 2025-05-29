@@ -8,6 +8,9 @@
 #include "AbilitySystem/GASAbilitySystemComponent.h"
 #include "AbilitySystem/GasAbilitySystemLibrary.h"
 #include "AbilitySystem/GASAttributeSet.h"
+#include "AI/GasAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GASProject/GASProject.h"
@@ -38,8 +41,11 @@ void AEnemy::BeginPlay()
 	
 	InitAbilityActorInfo();
 	GetCharacterMovement()-> MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
-
+	if(HasAuthority())
+	{
 	UGasAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent);
+		
+	}
 	
 	
 
@@ -91,6 +97,15 @@ void AEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	if(!HasAuthority()) return;
+	GasAIController = Cast<AGasAIController>(GetController());
+	GasAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	GasAIController->RunBehaviorTree(BehaviorTree);
+}
+
 void AEnemy::HighlightActor()
 {
 	bHighlighted = true;
@@ -120,9 +135,11 @@ void AEnemy::Die()
 
 void AEnemy::InitAbilityActorInfo()
 {
-	Super::InitAbilityActorInfo();
+	
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UGASAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-
-	InitializeDefaultAttributes();
+	if(HasAuthority())
+	{
+		InitializeDefaultAttributes();
+	}
 }
