@@ -26,7 +26,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "GasAbilitySystemLibrary | Character Class Defaults")
 	static void InitializeDefaultAttributes(const UObject* WorldContextObject, ECharacterClass CharacterClass, float Level, UAbilitySystemComponent* ASC);
 
-	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC);
+	static void GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass);
 	
 	UFUNCTION(BlueprintCallable, Category = "GasAbilitySystemLibrary | Character Class Defaults")
 	static UCharacterClassInfo* GetCharacterClassInfo(const UObject* WorldContextObject);
@@ -42,4 +42,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "GasAbilitySystemLibrary | GameplayEffects")
 	static void SetIsCriticalHit(UPARAM(ref)FGameplayEffectContextHandle& EffectContextHandle, bool bInIsCriticalHit);
+	
+	UFUNCTION(BlueprintCallable, Category = "GasAbilitySystemLibrary | GameplayEffects")
+	static void GetLivePlayersWithinRadius(const UObject* WorldContextObject, TArray<AActor*>& OutOverlappingActors, const TArray<AActor*>& IgnoreActors,  float Radius,const FVector& SphereLocation);
+
+	UFUNCTION(BlueprintPure, Category = "GasAbilitySystemLibrary | GameplayEffects")
+	static bool IsNotFriend(AActor* FirstActor, AActor* SecondActor);
 };

@@ -28,6 +28,12 @@ AEnemy::AEnemy()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	AttributeSet = CreateDefaultSubobject<UGASAttributeSet>("AttributeSet");
 
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
+
+	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
 	HealthBar->SetupAttachment(GetRootComponent());
 
@@ -43,8 +49,7 @@ void AEnemy::BeginPlay()
 	GetCharacterMovement()-> MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
 	if(HasAuthority())
 	{
-	UGasAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent);
-		
+		UGasAbilitySystemLibrary::GiveStartupAbilities(this,AbilitySystemComponent, CharacterClass);
 	}
 	
 	
@@ -83,6 +88,10 @@ void AEnemy::HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bHitReacting = NewCount > 0;
 	GetCharacterMovement()-> MaxWalkSpeed = bHitReacting ? 0.f : BaseWalkSpeed;
+	if(GasAIController && GasAIController->GetBlackboardComponent())
+	{
+		GasAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), bHitReacting);
+	}
 	
 }
 
@@ -104,6 +113,8 @@ void AEnemy::PossessedBy(AController* NewController)
 	GasAIController = Cast<AGasAIController>(GetController());
 	GasAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	GasAIController->RunBehaviorTree(BehaviorTree);
+	GasAIController->GetBlackboardComponent()->SetValueAsBool(FName("HitReacting"), false);
+	GasAIController->GetBlackboardComponent()->SetValueAsBool(FName("RangedAttacker"), CharacterClass != ECharacterClass::Warrior);
 }
 
 void AEnemy::HighlightActor()
@@ -131,6 +142,16 @@ void AEnemy::Die()
 {
 	SetLifeSpan(LifeSpan);
 	Super::Die();
+}
+
+void AEnemy::SetCombatTarget_Implementation(AActor* InCombatTarget)
+{
+	CombatTarget = InCombatTarget;
+}
+
+AActor* AEnemy::GetCombatTarget_Implementation() const
+{
+	return CombatTarget;
 }
 
 void AEnemy::InitAbilityActorInfo()

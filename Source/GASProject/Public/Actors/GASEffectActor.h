@@ -44,7 +44,8 @@ protected:
 	UFUNCTION(BlueprintCallable)void OnOverlap(AActor* TargetActor);
 	UFUNCTION(BlueprintCallable)void OnEndOverlap(AActor* TargetActor);
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Applied Effects") bool bDestroyOnEffectRemoval = false;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Applied Effects") bool bDestroyOnEffectApplication = false;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Applied Effects") bool bApplyEffectsToEnemies = false;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Applied Effects")TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "Applied Effects") EEffectApplicationPolicy InstantEffectApplicationPolicy = EEffectApplicationPolicy::DoNotApply;

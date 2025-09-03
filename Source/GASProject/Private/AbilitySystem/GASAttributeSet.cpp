@@ -179,6 +179,12 @@ void UGASAttributeSet::ShowFloatingText(const FEffectProperties& Props, const fl
 		{
 			// Show damage number on the source player controller
 			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
+			return;
+		}
+		if(AGASPlayerController* PC = Cast<AGASPlayerController>(Props.TargetCharacter->Controller))
+		{
+			// Show damage number on the source player controller
+			PC->ShowDamageNumber(Damage, Props.TargetCharacter, bBlockedHit, bCriticalHit);
 		}
 	}
 }

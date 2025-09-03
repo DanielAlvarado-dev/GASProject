@@ -1,13 +1,12 @@
 // Copyright Daniel Alvarado
 
-
 #include "Character/GASCharacterBase.h"
-#include "MotionWarping/Public/MotionWarpingComponent.h"
-#include "AbilitySystemComponent.h"
 #include "AbilitySystem/GASAbilitySystemComponent.h"
+#include "AbilitySystemComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GASGameplayTags.h"
 #include "GASProject/GASProject.h"
-
+#include "MotionWarping/Public/MotionWarpingComponent.h"
 
 AGASCharacterBase::AGASCharacterBase()
 {
@@ -40,10 +39,29 @@ void AGASCharacterBase::BeginPlay()
 	
 }
 
-FVector AGASCharacterBase::GetCombatSocketLocation()
+FVector AGASCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
 {
-	check(Weapon);
-	return Weapon->GetSocketLocation(WeaponTipSocketName);
+	const FGasGameplayTags& GameplayTags = FGasGameplayTags::Get();
+	if( MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_Weapon) && IsValid(Weapon)) {
+		return Weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+	if( MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_LeftHand) ) {
+		return Weapon->GetSocketLocation(LeftHandSocketName);
+	}
+	if( MontageTag.MatchesTagExact(GameplayTags.Montage_Attack_RightHand) ) {
+		return Weapon->GetSocketLocation(RightHandSocketName);
+	}
+	return FVector::ZeroVector;
+}
+
+bool AGASCharacterBase::IsDead_Implementation() const
+{
+	return bDead;
+}
+
+AActor* AGASCharacterBase::GetAvatar_Implementation() 
+{
+	return this;
 }
 
 void AGASCharacterBase::InitAbilityActorInfo()
@@ -65,6 +83,7 @@ void AGASCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultPrimaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultSecondaryAttributes, 1.f);
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
+	
 }
 
 void AGASCharacterBase::AddCharacterAbilities() const
@@ -109,10 +128,14 @@ UAnimMontage* AGASCharacterBase::GetHitReactMontage_Implementation()
 	return HitReactMontage;
 }
 
-void AGASCharacterBase::Die()
-{
-	Weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
-	MulticastHandleDeath();
+void AGASCharacterBase::Die() {
+  Weapon->DetachFromComponent(
+      FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+  MulticastHandleDeath();
+}
+
+TArray<FTaggedMontage> AGASCharacterBase::GetAttackMontages_Implementation() {
+  return AttackMontages;
 }
 
 void AGASCharacterBase::MulticastHandleDeath_Implementation()
@@ -128,6 +151,6 @@ void AGASCharacterBase::MulticastHandleDeath_Implementation()
 	
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Dissolve();
-	
+	bDead = true;
 }
 

@@ -66,6 +66,7 @@ int32 AGASCharacter::GetPlayerLevel()
 
 void AGASCharacter::InitAbilityActorInfo()
 {
+	
 	AGASPlayerState* GASPlayerState = GetPlayerState<AGASPlayerState>();
 	check(GASPlayerState);
 	GASPlayerState->GetAbilitySystemComponent()->InitAbilityActorInfo(GASPlayerState, this);

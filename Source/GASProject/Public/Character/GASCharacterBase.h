@@ -28,15 +28,24 @@ public:
 	virtual void UpdateFacingTarget_Implementation(const FVector& TargetLocation) override;
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
 	virtual void Die() override;
+
+	virtual TArray<FTaggedMontage> GetAttackMontages_Implementation() override;
 	
 	UFUNCTION(NetMulticast,Reliable)virtual void MulticastHandleDeath();
+
+	UPROPERTY(EditAnywhere,Category = Combat)
+	TArray<FTaggedMontage> AttackMontages;
 
 protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat") TObjectPtr<USkeletalMeshComponent> Weapon;
 	UPROPERTY(EditAnywhere, Category = Combat)	FName WeaponTipSocketName  = FName("TipSocket");
-	virtual FVector GetCombatSocketLocation() override;
+	UPROPERTY(EditAnywhere, Category = Combat)	FName LeftHandSocketName  = FName("LeftHandSocket");
+	UPROPERTY(EditAnywhere, Category = Combat)	FName RightHandSocketName  = FName("RightHandSocket");
+	virtual FVector GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag) override;
+	virtual bool IsDead_Implementation() const override;
+	virtual AActor* GetAvatar_Implementation() override;
 
 	UPROPERTY() TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY() TObjectPtr<UAttributeSet> AttributeSet;
@@ -64,6 +73,8 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadOnly) TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly) TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
+
+	bool bDead = false;
 private:
 
 	

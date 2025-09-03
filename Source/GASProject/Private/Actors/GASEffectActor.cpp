@@ -22,6 +22,8 @@ void AGASEffectActor::BeginPlay()
 
 void AGASEffectActor::ApplyEffectToTarget(AActor* TargetActor, const TSubclassOf<UGameplayEffect> GameplayEffectClass) 
 {
+	if(TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectsToEnemies) return;
+	
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if(TargetASC == nullptr) return;
 
@@ -34,6 +36,10 @@ void AGASEffectActor::ApplyEffectToTarget(AActor* TargetActor, const TSubclassOf
 	if(bIsInfinite && InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		ActiveEffectHandles.Add(ActiveEffectHandle, TargetASC);
+	}
+	if(bDestroyOnEffectApplication && EffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy != EGameplayEffectDurationType::Infinite)
+	{
+		Destroy();
 	}
 }
 
